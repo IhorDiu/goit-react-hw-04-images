@@ -1,7 +1,6 @@
-import { Component } from 'react';
-import {toastWarningMessage} from '../../serviceAPI/toast'
+import { useState } from 'react';
+import { toastWarningMessage } from '../../serviceAPI/toast';
 import propTypes from 'prop-types';
-
 
 import {
   SearchBar,
@@ -11,53 +10,46 @@ import {
   SearchFormInput,
 } from './Searchbar.styled';
 
-export class Searchbar extends Component {
-  state = {
-    searchQuery: '',
+export const Searchbar = ({inputValue}) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleInput = e => {
+    setSearchQuery(e.currentTarget.value.trimLeft());
   };
 
-  handleInput = (e) => {
-    this.setState({searchQuery: e.currentTarget.value.trimLeft()});
-  };
-
-
-  handleSubmit =(e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-    const {searchQuery} = this.state
+
     if (searchQuery === '') {
-      return toastWarningMessage();     
+      return toastWarningMessage();
     }
 
-    this.props.searchQuery(searchQuery);
-    this.setState({searchQuery: ''});
-
-
-
+    inputValue(searchQuery);
+    setSearchQuery('');
   };
 
-  render() {
-    return (
-      <SearchBar>
-        <SearchForm onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit">
-            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
-          </SearchFormButton>
+  return (
+    <SearchBar>
+      <SearchForm onSubmit={handleSubmit}>
+        <SearchFormButton type="submit">
+          <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+        </SearchFormButton>
 
-          <SearchFormInput
-            type="text"
-            autoComplete="off"
-            autoFocus
-            placeholder="Search images and photos"
-            onChange={this.handleInput}
-            value={this.state.searchQuery}
-          />
-        </SearchForm>
-      
-      </SearchBar>
-    );
-  }
-}
+        <SearchFormInput
+          type="text"
+          autoComplete="off"
+          autoFocus
+          placeholder="Search images and photos"
+          onChange={handleInput}
+          value={searchQuery}
+        />
+      </SearchForm>
+    </SearchBar>
+  );
+};
 
 Searchbar.propTypes = {
-  onSubmit: propTypes.func.isRequired,
+  inputValue: propTypes.func.isRequired,
 };
+
+
